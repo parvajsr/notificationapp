@@ -61,7 +61,7 @@ class Country
 
     /**
      * @ORM\ManyToOne(targetEntity="Notification", inversedBy="country")
-     * @ORM\JoinColumn(nullable=false)
+     * @ORM\JoinColumn(nullable=true)
      */
     private $notification;
 
