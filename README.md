@@ -13,19 +13,10 @@ Requirements
 
 Installation
 ------------
-
-[![Deploy](https://www.herokucdn.com/deploy/button.png)](https://heroku.com/deploy)
-
-First, install the [Symfony Installer](https://github.com/symfony/symfony-installer)
-if you haven't already. Then, install the Symfony Demo Application executing
-this command anywhere in your system:
-
-> **NOTE**
->
-> If you can't use the Symfony Installer, download and install the demo
+> If you can't use the Symfony Installer, download and install the notification
 > application using Git and Composer:
 >
->     $ git clone https://github.com/symfony/symfony-demo symfony_demo
+>     $ git clone https://github.com/parvajsr/notificationapp.git
 >     $ cd notificationapp/
 >     $ composer install --no-interaction
 
