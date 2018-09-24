@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block body_id 'homepage' %}
+
+{#
+    the homepage is a special page which displays neither a header nor a footer.
+    this is done with the 'trick' of defining empty Twig blocks without any content
+#}
+{% block header %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block body %}
+    <div class="page-header">
+        <h1> Welcome to the <strong> Notification </strong> Application </h1>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-offset-2 col-sm-6">
+            <div class="jumbotron">
+                <p>
+                    <a class="btn btn-primary btn-lg" href="{{ path('notification_index') }}">
+                        <i class="fa fa-lock" aria-hidden="true"></i> {{ 'action.browse_admin'|trans }}
+                    </a>
+                </p>
+            </div>
+        </div>
+    </div>
+{% endblock %}

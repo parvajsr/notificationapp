@@ -1,0 +1,62 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block body_id 'admin_notification_list' %}
+
+{% block main %}
+
+    {#<h2> Notification Details </h2>#}
+
+    {#<table class="table table-striped table-middle-aligned">#}
+        {#<thead>#}
+            {#<tr>#}
+                {#<th scope="col">UID</th>#}
+                {#<th scope="col">Body </th>#}
+                {#<th scope="col" class="text-center"> Sent Android </th>#}
+                {#<th scope="col" class="text-center"> Sent iOS </th>#}
+                {#<th scope="col" class="text-center"> Click Android </th>#}
+                {#<th scope="col" class="text-center"> Click iOS </th>#}
+            {#</tr>#}
+        {#</thead>#}
+        {#<tbody>#}
+            {#<tr>#}
+                {#<td>{{ notification.uid }}</td>#}
+                {#<td> <div style="width: 400px;"> <pre>{{ notification.body }}</pre> </div></td>#}
+                {#<td class="text-center"> {{ notification.sentCountAndr }} </td>#}
+                {#<td class="text-center"> {{ notification.sentCountiOs }} </td>#}
+                {#<td class="text-center"> {{ notification.clickCountAndr }} </td>#}
+                {#<td class="text-center"> {{ notification.clickCountiOs }} </td>#}
+            {#</tr>#}
+
+        {#</tbody>#}
+    {#</table>#}
+
+    <h2> Country Report </h2>
+
+    <table class="table table-striped table-middle-aligned">
+        <thead>
+        <tr>
+            <th scope="col">Country Code </th>
+            <th scope="col" class="text-center"> Sent Android </th>
+            <th scope="col" class="text-center"> Sent iOs </th>
+            <th scope="col" class="text-center"> Click Android </th>
+            <th scope="col" class="text-center"> Click iOs </th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for country in countries %}
+            <tr>
+                <td>{{ country.countryCode }}</td>
+                <td class="text-center"> {{ country.sentAndroid }} </td>
+                <td class="text-center"> {{ country.sentIos }} </td>
+                <td class="text-center"> {{ country.clickAndroid }} </td>
+                <td class="text-center"> {{ country.clickIos }} </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4" align="center">No data found.</td>
+            </tr>
+        {% endfor %}
+
+        </tbody>
+    </table>
+{% endblock %}

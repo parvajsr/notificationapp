@@ -1,0 +1,54 @@
+{% extends 'admin/layout.html.twig' %}
+
+{% block body_id 'admin_notification_list' %}
+
+{% block main %}
+    <div class="row">
+        <div class="col-sm-offset-9 col-sm-3 text-right">
+            <div class="section actions">
+                <a href="{{ path('admin_notification_send') }}" class="btn btn-lg btn-block btn-success">
+                    <i class="fa fa-plus" aria-hidden="true"></i> Create Notification
+                </a>
+            </div>
+        </div>
+    </div>
+    <h2> Notification List</h2>
+
+    <table class="table table-striped table-middle-aligned">
+        <thead>
+            <tr>
+                <th scope="col">UID</th>
+                <th scope="col">Body </th>
+                <th scope="col" class="text-center"> Sent Android </th>
+                <th scope="col" class="text-center"> Sent iOS </th>
+                <th scope="col" class="text-center"> Click Android </th>
+                <th scope="col" class="text-center"> Click iOS </th>
+                <th scope="col" class="text-center">  </th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for notification in notifications %}
+            <tr>
+                <td>{{ notification.uid }}</td>
+                <td> <div style="width: 500px;"> <pre>{{ notification.body }}</pre> </div></td>
+                <td> {{ notification.sentCountAndr }} </td>
+                <td> {{ notification.sentCountiOs }} </td>
+                <td> {{ notification.clickCountAndr }} </td>
+                <td> {{ notification.clickCountiOs }} </td>
+                <td class="text-right">
+                    <div class="item-actions">
+                        <a href="{{ path('admin_notification_show', {id: notification.id}) }}" class="btn btn-sm btn-default">
+                            <i class="fa fa-eye" aria-hidden="true"></i> {{ 'action.show'|trans }}
+                        </a>
+                    </div>
+                </td>
+
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="4" align="center">No data found.</td>
+           </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

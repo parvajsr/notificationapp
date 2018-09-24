@@ -1,0 +1,148 @@
+{% extends 'base.html.twig' %}
+
+{% block body_id 'add_notification' %}
+
+{% block main %}
+    <h2> Send Notification </h2>
+    <div id="notification_error" class="alert alert-danger" style="display: none;">
+        Data not valid. Please Entry valid data.
+    </div>
+    <div class="row">
+        <div class="col-sm-6 form-group">
+            <input type="radio" name="segment" value="topics" checked="checked"> Topics
+            <input type="radio" name="segment" value="singledevice"> Single Device
+        </div>
+        <div class="container1" id="notification">
+            <div class="col-sm-9 form-group">
+                <input type="text" id="app_0" name="apptext[]" required="required" class="form-control" placeholder="Application id">
+            </div>
+            <div class="form-group col-sm-2">
+                <select id="condition" name="condition" class="form-control">
+                    <option value="1"> AND </option>
+                    <option value="2"> OR </option>
+                </select>
+            </div>
+            <div class="form-group col-sm-1">
+                <button class="add_form_field btn-default btn" name="add_form_field">Add Field +</button>
+            </div>
+        </div>
+            <div class="col-sm-9 form-group">
+                <label class="control-label required" for="notification_title"> Content Title</label>
+                <input type="text" id="notification_title" name="notification[title]" required="required" autofocus="autofocus" class="form-control">
+            </div>
+
+            <div class="col-sm-9 form-group">
+                <label class="control-label required" for="notification_message">Message</label>
+                <input type="text" id="notification_message" name="notification[message]" required="required" autofocus="autofocus" class="form-control">
+            </div>
+            <div class="col-sm-9 form-group">
+                <label class="control-label required" for="image_url">Image Link</label>
+                <input type="text" id="image_url" name="image_url" required="required" autofocus="autofocus" class="form-control">
+            </div>
+            <div class="col-sm-6 form-group">
+                <label class="control-label required" for="notification_type">Type</label>
+                <select id="notification_type" name="notification[type]" autofocus="autofocus" class="form-control">
+                    <option value="">TYPE</option>
+                    <option value="URL">URL</option>
+                    <option value="CHANNEL">CHANNEL</option>
+                    <option value="VOD">VOD</option>
+                    <option value="CONTENT">CONTENT</option>
+                </select>
+            </div>
+            <div class="col-sm-6 form-group">
+                <label class="control-label required" for="notification_type_value">Type Value</label>
+                <input type="text" id="type_value" name="type_value" required="required" autofocus="autofocus" class="form-control">
+            </div>
+
+            <div class="col-sm-9 form-group">
+                <button type="button" id="createjson" name="createjson" class="btn-default btn" onclick="createJsonBody();"> Craete Json Body </button>
+            </div>
+    </div>
+            {{ form_start(form) }}
+            {{ form_row(form.body) }}
+            {{ form_row(form.uid) }}
+            <div class="form-group">
+                <button type="submit"  name="send_notification" class="btn-default btn"> Send Notification and Save </button>
+            </div>
+
+         {{ form_end(form) }}
+{% endblock %}
+ {% block javascripts %}
+     {{ parent() }}
+     <script src="{{ asset('build/js/jquery-1.11.1.min.js') }}"></script>
+     <script type="text/javascript" src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
+     <script type="text/javascript">
+
+         $(document).ready(function() {
+             var max_fields      = 5;
+             var wrapper         = $(".container1");
+             var add_button      = $(".add_form_field");
+
+             var x = 1;
+             $(add_button).click(function(e){
+                 var logic = $("#condition").val();
+                 e.preventDefault();
+                 $(wrapper).append('<div class="col-sm-9 form-group"><input type="text" name="apptext[]" id="'+logic+'" class="form-control" /><a href="#" class="delete" id="app_'+x+'" >Delete</a></div>'); //add input box
+                 x++;
+             });
+
+             $(wrapper).on("click",".delete", function(e){
+                 e.preventDefault();
+                 $(this).parent('div').remove();
+                 x--;
+                 createJsonBody();
+             })
+
+             $("#notification_uid").val(Math.floor(new Date().valueOf() * Math.random()));
+         });
+
+         function createJsonBody() {
+             var x = $("#notification :input");
+             var tt = '';
+             $.each(x, function(i, field){
+                if( field.type != 'radio' && field.type  != 'select-one' && field.type  != 'submit' && field.value !='' ){
+                    if(tt.length > 0 ){
+                        if(field.id == 1)
+                            tt += ' && ';
+                        else if(field.id == 2)
+                            tt += ' || ';
+                    }
+                    tt += "'" + field.value +"'" + " in topics";
+                }
+             });
+             var mainObj = {
+                 "condition" : tt,
+             }
+             var title      = $("#notification_title").val();
+             var message    = $("#notification_message").val();
+             var notificationType     = $("#notification_type").val();
+             var notificationUrl      = $("#notification_url").val();
+             var typeValue     = $("#type_value").val();
+             var imageUrl     = $("#image_url").val();
+             var uid = Math.floor(new Date().valueOf() * Math.random());
+             var appid = $("#app_0").val();
+             if(appid == '' || title == '' || message == ''){
+                 $("#notification_error").show();
+                 return false;
+             }
+             mainObj.data = {
+                 "uid" : uid,
+                 "contentTitle" : title,
+                 "message" : message,
+                 "image" :imageUrl,
+                 "Type" : notificationType
+             };
+
+             if( notificationType == 'URL' ){
+                 mainObj.data[notificationType.toLowerCase()] = typeValue;
+             }else if(notificationType == 'CHANNEL' || notificationType == 'CONTENT'){
+                 mainObj.data.slug = typeValue
+             }else if(notificationType == 'VOD'){
+                 mainObj.data.bongoid = typeValue;
+             }
+            $("#notification_body").val(JSON.stringify(mainObj,null,'\t'));
+            $("#notification_uid").val(uid);
+            $("#notification_error").hide();
+         }
+     </script>
+ {% endblock %}
