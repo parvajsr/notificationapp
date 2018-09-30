@@ -6,14 +6,15 @@
  * Time: 09:48 AM
  */
 
-namespace AppBundle\Service;
+namespace Tests\AppBundle\Service;
 use GuzzleHttp\Client;
 use AppBundle\Entity\Notification;
 use GuzzleHttp\Exception\ClientException;
 use Doctrine\ORM\EntityManagerInterface;
 use AppBundle\Entity\Country;
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 
-class NotificationApiServiceTest
+class NotificationApiServiceTest extends WebTestCase
 {
     /**
      * @var string
@@ -26,63 +27,18 @@ class NotificationApiServiceTest
     private $api_key;
 
     /**
-     * @var EntityManagerInterface
-     */
-    private $em;
-
-    /**
      * NotificationApiService constructor.
      *
      * @param $em
      * @param $apiEndPoint
      * @param $apiKey
      */
-    public function __construct(EntityManagerInterface $em)
+    public function __construct()
     {
-        $this->em               = $em;
         $this->api_end_point    = 'https://fcm.googleapis.com';
         $this->api_key          = 'AIzaSyA2Kd0Rno2FoOWXlJp3RwMku4sZsRWvsUc';
     }
 
-    /**
-     * @param Notification $notification
-     * @param $device
-     * @param $countryCode
-     * @return string
-     */
-    public function addCountry(Notification $notification, $device, $countryCode, $option)
-    {
-        $device = strtolower($device);
-        $country = new Country();
-        try {
-            switch ($device) {
-                case 'android':
-                    if($option){
-                        $country->setSentAndroid(1);
-                    }else{
-                        $country->setClickAndroid(1);
-                    }
-                    break;
-                case 'ios':
-                    if($option){
-                        $country->setSentIos(1);
-                    }else{
-                        $country->setClickIos(1);
-                    }
-                    break;
-            }
-            $country->setNotification($notification);
-            $country->setCountryCode($countryCode);
-
-            $this->em->persist($country);
-            $this->em->flush();
-
-            return 'Success';
-
-        } catch (\Exception $e) {
-            return 'Not Found';
-        }
-    }
 
     /**
      * @param Notification $notification
@@ -131,9 +87,12 @@ class NotificationApiServiceTest
      * @param $device
      * @return string
      */
-    public function updateCounter(Notification $notification, $device, $option)
+    public function testupdateCounter()
     {
-        $device = strtolower($device);
+        $device = 'android';
+        $client = static::createClient();
+        $option = true;
+        $notification = $client->getContainer()->get('doctrine')->getRepository(Notification::class)->find(125);
         try {
 
             switch ($device) {
@@ -172,7 +131,7 @@ class NotificationApiServiceTest
      * @param Notification $notification
      * @return array
      */
-    public function sendNotification(Notification $notification)
+    public function testsendNotification(Notification $notification)
     {
         return $this->sendRequest('fcm/send', $notification->getBody(), 'POST');
 
@@ -199,16 +158,24 @@ class NotificationApiServiceTest
 
     }
 
-    private function sendRequest($uri, $data, $method = 'GET')
+    public function testsendRequest()
     {
         $client = new Client(['base_uri' => $this->api_end_point]);
         $headers = [
             'Authorization' => "key={$this->api_key}",
             'Content-Type '=> 'application/json'
         ];
+        $data = ["condition" => "'news' in topics",
+                    "data" => [
+                    "uid"=> "632474570930",
+                    "contentTitle" => "title",
+                ],
+            ];
 
         try {
-            $response = $client->request($method, $uri, ['headers' => $headers, 'body' => $data]);
+            $response = $client->request($method='POST', $uri='fcm/send', ['headers' => $headers, 'form_params' => $data]);
+
+            $this->assertEquals(200, $client->getResponse()->getStatusCode());
         } catch (ClientException $e) {
             $response = $e->getResponse();
         }

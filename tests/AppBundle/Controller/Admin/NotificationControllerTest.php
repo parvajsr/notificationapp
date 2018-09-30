@@ -50,14 +50,12 @@ class NotificationControllerTest extends WebTestCase
         ]);
 
         $crawler = $client->request('GET', 'en/admin/notification/');
-        $crawler = $client->followRedirect();
 
-        dump( $client->getResponse()->getStatusCode() );
         $this->assertEquals(200,$client->getResponse()->getStatusCode());
 
     }
 
-/*
+
     public function testnotification()
     {
         $uid    = "247360758022";
@@ -68,52 +66,35 @@ class NotificationControllerTest extends WebTestCase
                         ],
                   ];
 
-//        $client = static::createClient([], [
-//            'PHP_AUTH_USER' => 'parvaj_sarker',
-//            'PHP_AUTH_PW' => 'kitten',
-//        ]);
-//
-//        $client->followRedirects();
-
-        $crawler = $this->client->request('GET', $this->baseUrl.'/en/admin/notification/send');
-        $this->assertEquals(
-            1,
-            $crawler->filter('html:contains("Send Notification")')->count()
-        );
-//        $form = $crawler->selectButton('Send Notification and Save')->form([
-//            "notification[body]" => $body,
-//            "notification[uid]" => $uid,
-//        ]);
-//        $client->submit($form);
-
-     //   $this->assertSame(Response::HTTP_FOUND, $client->getResponse()->getStatusCode());
-
-        $notification = $this->client->getContainer()->get('doctrine')->getRepository(Notification::class)->findOneBy([
-            'uid' => $uid,
+        $client = static::createClient([], [
+            'PHP_AUTH_USER' => 'parvaj_sarker',
+            'PHP_AUTH_PW' => 'kitten',
         ]);
-        $this->assertNotNull($notification);
 
+        $crawler = $client->request('POST', '/en/admin/notification/send',[
+            'form_params' => [
+             'body' => $body,
+             'uid' => $uid
+            ]
+        ]);
+
+        $this->assertEquals(200, $client->getResponse()->getStatusCode());
     }
-*/
 
-//    public function testshow()
-//    {
-//        $this->client = static::createClient([], [
-//            'PHP_AUTH_USER' => 'parvaj_sarker',
-//            'PHP_AUTH_PW' => 'kitten',
-//        ]);
-//        $this->client->followRedirects();
-//        $crawler = $this->client->request('GET', 'en/admin/notification/125');
-//        dump($this->client->getResponse()->getStatusCode()); die;
-//        $this->assertEquals(
-//            1,
-//            $crawler->filter('html:contains("ttttttttt")')->count()
-//        );
-//
-//        //  $this->assertSame(Response::HTTP_FOUND, $client->getResponse()->getStatusCode());
-//
-//
-//        //$notification = $client->getContainer()->get('doctrine')->getRepository(Notification::class)->find(125);
-//        //$this->assertSame($newBlogPostTitle, $notification);
-//    }
+
+    public function testshow()
+    {
+        $client = static::createClient([], [
+            'PHP_AUTH_USER' => 'parvaj_sarker',
+            'PHP_AUTH_PW' => 'kitten',
+        ]);
+
+        $crawler = $client->request('GET', 'en/admin/notification/',['id'=>'125']);
+        $this->assertSame(200, $client->getResponse()->getStatusCode());
+
+        //$newNotification = new Notification();
+        $notification = $client->getContainer()->get('doctrine')->getRepository(Notification::class)->find(125);
+        //$this->assertSame($newNotification, $notification);
+        $this->assertInstanceOf(Notification::class, $notification);
+    }
 }

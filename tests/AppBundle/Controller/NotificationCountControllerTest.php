@@ -12,7 +12,6 @@
 namespace Tests\AppBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
 use Symfony\Component\HttpFoundation\Response;
-//use PHPUnit\Framework\TestCase;
 
 
 /**
@@ -52,13 +51,18 @@ class NotificationCountControllerTest extends WebTestCase
     public function testSentNotificationCount()
     {
         $client = static::createClient();
-        $client->setServerParameter('HTTP_HOST', "http://localhost:8000");
-        $p = $client->getServerParameter('HTTP_HOST');
-        $crawler = $client->request('GET', '/en/notification/sent-count/');
-        //dump($client->getResponse());
+        $crawler = $client->request('GET', '/en/notification/sent-count/',[
+            'id' => '247360758022',
+            'countryCode' => 'bd',
+            'device' => 'android'
+        ]);
+        $resp = json_decode($client->getResponse()->getContent(),true);
+
+        $this->assertEquals("Success",$resp['message']);
+
         $this->assertEquals(
-            1,
-            $crawler->filter('html:contains("Success")')->count()
+            200,
+            $client->getResponse()->getStatusCode()
         );
     }
 
@@ -66,10 +70,16 @@ class NotificationCountControllerTest extends WebTestCase
     public function testClickCountNotification()
     {
         $client = static::createClient();
-        $crawler = $client->request('GET', '/en/notification/click-count/?countryCode=bd&device=android&id=247360758022');
+        $crawler = $client->request('GET', '/en/notification/click-count/',[
+            'id' => '247360758022',
+            'countryCode' => 'bd',
+            'device' => 'android'
+        ]);
+        $resp = json_decode($client->getResponse()->getContent(),true);
+        $this->assertEquals("Success", $resp['message']);
         $this->assertEquals(
-            1,
-            $crawler->filter('html:contains("Success")')->count()
+            200,
+            $client->getResponse()->getStatusCode()
         );
     }
 
