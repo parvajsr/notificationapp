@@ -21,3 +21,4 @@
 /web/build/images/glyphicons-*
 dev
 /web/dev
+.idea

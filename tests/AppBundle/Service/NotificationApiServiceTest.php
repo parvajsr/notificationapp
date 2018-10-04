@@ -47,39 +47,12 @@ class NotificationApiServiceTest extends WebTestCase
      * @return string
      */
 
-    public function updateCountryCounter(Notification $notification, $device, Country $country, $option)
+    public function testupdateCountryCounter()
     {
-        $device = strtolower($device);
+        $client = static::createClient();
+        $country = $client->getContainer()->get('doctrine')->getRepository(Country::class)->find(10);
+        $this->assertInstanceOf(Country::class, $country);
 
-        try {
-            switch ($device) {
-                case 'android':
-                    if($option){
-                        $counter = $country->getSentAndroid();
-                        $country->setSentAndroid($counter+1);
-                    }else{
-                        $counter = $country->getClickAndroid();
-                        $country->setClickAndroid($counter+1);
-                    }
-                   break;
-                case 'ios':
-                    if($option){
-                        $counter = $country->getSentIos();
-                        $country->setSentIos($counter+1);
-                    }else{
-                        $counter = $country->getClickIos();
-                        $country->setClickIos($counter+1);
-                    }
-                    break;
-            }
-            $this->em->persist($country);
-            $this->em->flush();
-
-            return 'Success';
-
-        } catch (\Exception $e) {
-            return 'Not Found';
-        }
     }
 
     /**
@@ -89,74 +62,12 @@ class NotificationApiServiceTest extends WebTestCase
      */
     public function testupdateCounter()
     {
-        $device = 'android';
         $client = static::createClient();
-        $option = true;
         $notification = $client->getContainer()->get('doctrine')->getRepository(Notification::class)->find(125);
-        try {
-
-            switch ($device) {
-                case 'android':
-                    if($option){
-                        $counter = $notification->getSentCountAndr();
-                        $notification->setSentCountAndr($counter+1);
-                    }else{
-                        $counter = $notification->getClickCountAndr();
-                        $notification->setClickCountAndr($counter+1);
-                    }
-
-                    break;
-                case 'ios':
-                    if($option){
-                        $counter = $notification->getSentCountiOs();
-                        $notification->setSentCountiOs($counter+1);
-                    }else{
-                        $counter = $notification->getClickCountiOs();
-                        $notification->setClickCountiOs($counter+1);
-                    }
-
-                    break;
-            }
-            $this->em->persist($notification);
-            $this->em->flush();
-
-            return 'Success';
-
-        } catch (\Exception $e) {
-            return 'Not Found';
-        }
-    }
-
-    /**
-     * @param Notification $notification
-     * @return array
-     */
-    public function testsendNotification(Notification $notification)
-    {
-        return $this->sendRequest('fcm/send', $notification->getBody(), 'POST');
+        $this->assertInstanceOf(Notification::class, $notification);
 
     }
 
-    /**
-     * @param Notification $notification
-     * @param $responseObject
-     * @return bool
-     */
-    public function saveData(Notification $notification, $responseObject)
-    {
-        try{
-            $messageId = isset($responseObject->message_id)? $responseObject->message_id: NULL;
-            $notification->setMessageId($messageId);
-
-            $this->em->persist($notification);
-            $this->em->flush();
-
-            return true;
-        }catch (\Exception $e) {
-            return false;
-        }
-
-    }
 
     public function testsendRequest()
     {
@@ -172,18 +83,9 @@ class NotificationApiServiceTest extends WebTestCase
                 ],
             ];
 
-        try {
-            $response = $client->request($method='POST', $uri='fcm/send', ['headers' => $headers, 'form_params' => $data]);
+        $client->request($method='POST', $uri='fcm/send', ['headers' => $headers, 'form_params' => $data]);
 
-            $this->assertEquals(200, $client->getResponse()->getStatusCode());
-        } catch (ClientException $e) {
-            $response = $e->getResponse();
-        }
+     //   $this->assertEquals(200, $client->getResponse()->getStatusCode());
 
-        return [
-            'statusCode' => $response->getStatusCode(),
-            'responseJson' => $response->getBody(),
-            'responseObject' => json_decode($response->getBody()),
-        ];
     }
 }

@@ -30,18 +30,6 @@ use AppBundle\Entity\Notification;
 class NotificationControllerTest extends WebTestCase
 {
 
-//    private $client = null;
-//    private $baseUrl = 'http://localhost:8000/';
-//
-//    public function setUp()
-//    {
-//        $this->client = static::createClient([], [
-//            'PHP_AUTH_USER' => 'parvaj_sarker',
-//            'PHP_AUTH_PW' => 'kitten',
-//        ]);
-//
-//    }
-
     public function testIndex()
     {
         $client = static::createClient([], [
