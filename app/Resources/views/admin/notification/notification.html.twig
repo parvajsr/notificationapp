@@ -9,8 +9,8 @@
     </div>
     <div class="row">
         <div class="col-sm-6 form-group">
-            <input type="radio" name="segment" value="topics" checked="checked"> Topics
-            <input type="radio" name="segment" value="singledevice"> Single Device
+            <input type="radio" name="segment" id="segment" value="topics" checked="checked"> Topics
+            <input type="radio" name="segment" id="segment" value="singledevice"> Single Device
         </div>
         <div class="container1" id="notification">
             <div class="col-sm-9 form-group">
@@ -98,21 +98,30 @@
 
          function createJsonBody() {
              var x = $("#notification :input");
+             var isSingleDeviceChecked = $('#segment:checked').val()=='singledevice'?true:false;
              var tt = '';
-             $.each(x, function(i, field){
-                if( field.type != 'radio' && field.type  != 'select-one' && field.type  != 'submit' && field.value !='' ){
-                    if(tt.length > 0 ){
-                        if(field.id == 1)
-                            tt += ' && ';
-                        else if(field.id == 2)
-                            tt += ' || ';
-                    }
-                    tt += "'" + field.value +"'" + " in topics";
-                }
-             });
-             var mainObj = {
-                 "condition" : tt,
+             if(isSingleDeviceChecked){
+                 var mainObj = {
+                     "to" : $("#app_0").val()
+                 }
+             }else{
+                 $.each(x, function(i, field){
+                     if( field.type != 'radio' && field.type  != 'select-one' && field.type  != 'submit' && field.value !='' ){
+                         if(tt.length > 0 ){
+                             if(field.id == 1)
+                                 tt += ' && ';
+                             else if(field.id == 2)
+                                 tt += ' || ';
+                         }
+                         tt += "'" + field.value +"'" + " in topics";
+                     }
+                 });
+
+                 var mainObj = {
+                     "condition" : tt,
+                 }
              }
+
              var title      = $("#notification_title").val();
              var message    = $("#notification_message").val();
              var notificationType     = $("#notification_type").val();

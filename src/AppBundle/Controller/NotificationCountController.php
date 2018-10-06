@@ -47,7 +47,7 @@ class NotificationCountController extends Controller
 
 
     /**
-     * @Route("/sent-count/",  name="sent_notification")
+     * @Route("/sent-count",  name="sent_notification")
      * @Method("GET")
      *
      * @return Response|JsonResponse
@@ -84,7 +84,7 @@ class NotificationCountController extends Controller
     }
 
     /**
-     * @Route("/click-count/", name="count_click_notification")
+     * @Route("/click-count", name="count_click_notification")
      * @Method("GET")
      *
      * @return Response|JsonResponse
