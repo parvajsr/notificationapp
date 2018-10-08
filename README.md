@@ -7,8 +7,7 @@ Requirements
 ------------
 
   * PHP 5.5.9 or higher;
-  * PDO-SQLite PHP extension enabled;
-  * and the [usual Symfony application requirements](https://symfony.com/doc/current/reference/requirements.html).
+  * PDO-SQLite PHP extension enabled
 
 
 Installation
